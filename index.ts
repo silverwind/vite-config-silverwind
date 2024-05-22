@@ -36,7 +36,9 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
   return ret;
 }
 
-const base = ({url, build = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = {}): ViteConfig => {
+const defaultConfig = {build: {rollupOptions: {output: {}}}};
+
+const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -49,7 +51,15 @@ const base = ({url, build = {}, esbuild = {}, plugins = [], ...other}: CustomCon
       chunkSizeWarningLimit: Infinity,
       assetsInlineLimit: 0,
       reportCompressedSize: false,
-      ...build,
+      rollupOptions: {
+        output: {
+          // for some reason rollup likes to use module name as filename instead of the documented default
+          entryFileNames: "[name].js",
+          ...output,
+        },
+        ...otherRollupOptions,
+      },
+      ...otherBuild,
     },
     esbuild: {
       legalComments: "none",
@@ -65,7 +75,7 @@ const base = ({url, build = {}, esbuild = {}, plugins = [], ...other}: CustomCon
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = {}): ViteConfig {
+export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -101,7 +111,7 @@ export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild
   });
 }
 
-export function app({build = {}, ...other}: CustomConfig = {}): ViteConfig {
+export function app({build = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
     build,
     ...other,
