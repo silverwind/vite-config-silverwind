@@ -14,6 +14,7 @@ type ViteConfig = UserConfig;
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
   url?: string,
+  dtsExcludes?: string[],
 };
 
 function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]): PluginOption[] {
@@ -38,7 +39,7 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
 
 const defaultConfig = {build: {rollupOptions: {output: {}}}};
 
-const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
+const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -66,6 +67,11 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
       ...esbuild,
     },
     plugins: dedupePlugins([
+      dtsPlugin({exclude: [
+        "*.config.*",
+        "*.test.*",
+        ...(dtsExcludes ?? []),
+      ]}),
       stringPlugin(),
     ], plugins),
     ...other,
@@ -75,7 +81,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -101,12 +107,6 @@ export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild
       },
       ...otherBuild,
     },
-    plugins: dedupePlugins([
-      dtsPlugin({exclude: [
-        "*.config.*",
-        "*.test.*",
-      ]}),
-    ], plugins),
     ...other,
   });
 }
