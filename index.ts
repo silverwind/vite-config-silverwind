@@ -44,7 +44,7 @@ const base = ({url, build = {}, esbuild = {}, plugins = [], ...other}: CustomCon
       ...(url && {outDir: fileURLToPath(new URL("dist", url))}),
       minify: false,
       sourcemap: false,
-      target: "modules",
+      target: "esnext",
       emptyOutDir: true,
       chunkSizeWarningLimit: Infinity,
       assetsInlineLimit: 0,
