@@ -39,7 +39,7 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
 
 const defaultConfig = {build: {rollupOptions: {output: {}}}};
 
-const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
+const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -66,14 +66,6 @@ const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupO
       ...esbuild,
     },
     plugins: dedupePlugins([
-      dtsPlugin({
-        logLevel: "warn",
-        exclude: [
-          "*.config.*",
-          "*.test.*",
-          ...(dtsExcludes ?? []),
-        ]},
-      ),
       stringPlugin(),
     ], plugins),
     ...other,
@@ -83,7 +75,7 @@ const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupO
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function lib({url, dtsExcludes, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -110,6 +102,16 @@ export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild
       },
       ...otherBuild,
     },
+    plugins: dedupePlugins([
+      dtsPlugin({
+        logLevel: "warn",
+        exclude: [
+          "*.config.*",
+          "*.test.*",
+          ...(dtsExcludes ?? []),
+        ]},
+      ),
+    ], plugins),
     ...other,
   });
 }
