@@ -14,7 +14,10 @@ type ViteConfig = UserConfig;
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
   url?: string,
+  /** Additional path globs to exclude from .d.ts generation */
   dtsExcludes?: string[],
+  /** Disable .d.ts generation */
+  noDts?: boolean,
 };
 
 function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]): PluginOption[] {
@@ -75,7 +78,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-export function lib({url, dtsExcludes, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -104,7 +107,7 @@ export function lib({url, dtsExcludes, build: {lib = false, rollupOptions = {}, 
       ...otherBuild,
     },
     plugins: dedupePlugins([
-      dtsPlugin({
+      !noDts && dtsPlugin({
         logLevel: "warn",
         exclude: [
           "*.config.*",
