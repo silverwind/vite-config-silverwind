@@ -47,7 +47,6 @@ const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupO
       ...(url && {outDir: fileURLToPath(new URL("dist", url))}),
       minify: false,
       sourcemap: false,
-      target: "esnext",
       emptyOutDir: true,
       chunkSizeWarningLimit: Infinity,
       assetsInlineLimit: 0,
@@ -92,6 +91,7 @@ export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild
   return base({
     url,
     build: {
+      target: "esnext",
       lib: {
         ...(url && {entry: fileURLToPath(new URL(libEntryFile, url))}),
         formats: ["es"],
@@ -113,7 +113,10 @@ export function lib({url, build: {lib = false, rollupOptions = {}, ...otherBuild
 
 export function app({build = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
-    build,
+    build: {
+      target: "modules",
+      ...build,
+    },
     ...other,
   });
 }
