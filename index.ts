@@ -96,6 +96,7 @@ export function lib({url, dtsExcludes, build: {lib = false, rollupOptions = {}, 
         external: [
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
+          ...builtinModules,
           ...builtinModules.map(module => `node:${module}`),
         ],
         ...rollupOptions,
