@@ -66,11 +66,14 @@ const base = ({url, dtsExcludes, build: {rollupOptions: {output, ...otherRollupO
       ...esbuild,
     },
     plugins: dedupePlugins([
-      dtsPlugin({exclude: [
-        "*.config.*",
-        "*.test.*",
-        ...(dtsExcludes ?? []),
-      ]}),
+      dtsPlugin({
+        logLevel: "warn",
+        exclude: [
+          "*.config.*",
+          "*.test.*",
+          ...(dtsExcludes ?? []),
+        ]},
+      ),
       stringPlugin(),
     ], plugins),
     ...other,
