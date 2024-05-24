@@ -156,6 +156,7 @@ export function webApp({build = defaultBuild, ...other}: CustomConfig = defaultC
   return base({
     build: {
       target: "modules",
+      minify: "esbuild",
       assetsInlineLimit: 32768,
       ...build,
     },
