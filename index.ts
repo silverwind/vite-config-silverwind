@@ -134,7 +134,8 @@ export function nodeLib({build = defaultBuild, ...other}: CustomConfig = default
       },
     },
     resolve: {
-      mainFields: ["module"],
+      conditions: ["import", "module", "default", "production"], // default minus browser
+      mainFields: ["module", "jsnext:main", "jsnext"], // default minus browser
     },
     ...other,
   });
