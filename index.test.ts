@@ -1,4 +1,4 @@
-import {nodeLib, webLib, webApp} from "./index.ts";
+import {nodeLib, nodeCli, webLib, webApp} from "./index.ts";
 import type {LibraryOptions} from "vite";
 import type {OutputOptions} from "rollup";
 
@@ -24,6 +24,11 @@ test("nodeLib", () => {
   expect(cfg.resolve?.mainFields).not.toContain("browser");
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
+  expect(cfg.build?.minify).toBeFalsy();
+});
+
+test("nodeCli", () => {
+  expect(nodeCli().build?.minify).toBeTruthy();
 });
 
 test("webLib", () => {
@@ -48,6 +53,7 @@ test("webLib", () => {
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
+  expect(cfg.build?.minify).toBeFalsy();
 });
 
 test("webapp", () => {
@@ -59,4 +65,5 @@ test("webapp", () => {
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(1);
   expect(cfg.resolve?.mainFields).toBeFalsy();
+  expect(cfg.build?.minify).toBeTruthy();
 });

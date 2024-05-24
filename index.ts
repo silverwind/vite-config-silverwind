@@ -120,11 +120,21 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, 
   });
 }
 
+export function nodeCli({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  return nodeLib({
+    build: {
+      minify: "esbuild",
+      ...build,
+    },
+    ...other,
+  });
+}
+
 export function nodeLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
     build: {
       target: "esnext",
-      minify: "esbuild",
+      minify: false,
       ...build,
       assetsInlineLimit: 0,
       rollupOptions: {
