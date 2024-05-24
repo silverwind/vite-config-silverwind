@@ -50,7 +50,6 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
     clearScreen: false,
     build: {
       ...(url && {outDir: fileURLToPath(new URL("dist", url))}),
-      minify: false,
       sourcemap: false,
       emptyOutDir: true,
       chunkSizeWarningLimit: Infinity,
@@ -125,6 +124,7 @@ export function nodeLib({build = defaultBuild, ...other}: CustomConfig = default
   return lib({
     build: {
       target: "esnext",
+      minify: "esbuild",
       ...build,
       assetsInlineLimit: 0,
       rollupOptions: {
@@ -145,6 +145,7 @@ export function webLib({build = defaultBuild, ...other}: CustomConfig = defaultC
   return lib({
     build: {
       target: "modules",
+      minify: false,
       cssCodeSplit: true, // needed for css entry points
       assetsInlineLimit: 32768,
       ...build,
