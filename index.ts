@@ -122,6 +122,7 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, 
 
 export function nodeCli({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return nodeLib({
+    noDts: true,
     build: {
       minify: "esbuild",
       ...build,
