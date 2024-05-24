@@ -1,6 +1,6 @@
 import {defineConfig} from "vite";
-import {lib} from "./index.ts";
+import {nodeLib} from "./index.ts";
 
-export default defineConfig(lib({
+export default defineConfig(nodeLib({
   url: import.meta.url,
 }));

@@ -40,7 +40,9 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
   return ret;
 }
 
-const defaultConfig = {build: {rollupOptions: {output: {}}}};
+const defaultRollupOptions = {output: {}};
+const defaultBuild = {rollupOptions: defaultRollupOptions};
+const defaultConfig = {build: defaultBuild};
 
 const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
@@ -52,7 +54,6 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
       sourcemap: false,
       emptyOutDir: true,
       chunkSizeWarningLimit: Infinity,
-      assetsInlineLimit: 0,
       reportCompressedSize: false,
       rollupOptions: {
         output: {
@@ -78,7 +79,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-export function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -120,10 +121,42 @@ export function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions
   });
 }
 
-export function app({build = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  return lib({
+    build: {
+      target: "esnext",
+      ...build,
+      assetsInlineLimit: 0,
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+        },
+      },
+    },
+    resolve: {
+      mainFields: ["module"],
+    },
+    ...other,
+  });
+}
+
+export function webLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  return lib({
+    build: {
+      target: "modules",
+      cssCodeSplit: true, // needed for css entry points
+      assetsInlineLimit: 32768,
+      ...build,
+    },
+    ...other,
+  });
+}
+
+export function webApp({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
     build: {
       target: "modules",
+      assetsInlineLimit: 32768,
       ...build,
     },
     ...other,
