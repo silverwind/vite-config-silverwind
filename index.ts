@@ -120,33 +120,33 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, 
   });
 }
 
-export function nodeCli({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
-  return nodeLib({
-    noDts: true,
-    build: {
-      minify: "esbuild",
-      ...build,
-    },
-    ...other,
-  });
-}
-
 export function nodeLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
     build: {
       target: "esnext",
       minify: false,
-      ...build,
       assetsInlineLimit: 0,
       rollupOptions: {
         output: {
           inlineDynamicImports: true,
         },
       },
+      ...build,
     },
     resolve: {
       conditions: ["import", "module", "default", "production"], // default minus browser
       mainFields: ["module", "jsnext:main", "jsnext"], // default minus browser
+    },
+    ...other,
+  });
+}
+
+export function nodeCli({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  return nodeLib({
+    noDts: true,
+    build: {
+      minify: "esbuild",
+      ...build,
     },
     ...other,
   });
