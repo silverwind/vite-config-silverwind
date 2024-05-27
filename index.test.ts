@@ -18,7 +18,7 @@ test("nodeLib", () => {
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
-  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
+  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
   expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).toEqual(true);
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.resolve?.mainFields).not.toContain("browser");
@@ -28,7 +28,9 @@ test("nodeLib", () => {
 });
 
 test("nodeCli", () => {
-  expect(nodeCli().build?.minify).toBeTruthy();
+  const cfg = nodeCli();
+  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
+  expect(cfg.build?.minify).toBeTruthy();
 });
 
 test("webLib", () => {
@@ -48,7 +50,7 @@ test("webLib", () => {
   expect(cfg.build?.rollupOptions?.external).toBeArray();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
   expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).not.toEqual(true);
-  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).not.toEqual("[name].js");
+  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.plugins).toBeArray();

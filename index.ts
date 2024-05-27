@@ -120,7 +120,7 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, 
   });
 }
 
-export function nodeLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
     build: {
       target: "esnext",
@@ -129,9 +129,11 @@ export function nodeLib({build = defaultBuild, ...other}: CustomConfig = default
       rollupOptions: {
         output: {
           inlineDynamicImports: true,
+          ...output,
         },
+        ...otherRollupOptions,
       },
-      ...build,
+      ...otherBuild,
     },
     resolve: {
       conditions: ["import", "module", "default", "production"], // default minus browser
