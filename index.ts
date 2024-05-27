@@ -44,7 +44,7 @@ const defaultRollupOptions = {output: {}};
 const defaultBuild = {rollupOptions: defaultRollupOptions};
 const defaultConfig = {build: defaultBuild};
 
-const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = {}, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
+const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -78,7 +78,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions}, ...o
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, ...otherBuild} = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -120,7 +120,7 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = {}, 
   });
 }
 
-export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions}, ...otherBuild} = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
     build: {
       target: "esnext",
