@@ -120,9 +120,12 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = defa
   });
 }
 
-export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
     build: {
+      // it's a hack but seems like the best option because "browser" module resolution does not
+      // seem to be possible to disable otherwise.
+      ssr: true,
       target: "esnext",
       minify: false,
       assetsInlineLimit: 0,
@@ -135,9 +138,9 @@ export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} 
       },
       ...otherBuild,
     },
-    resolve: {
-      conditions: ["import", "module", "default", "production"], // default minus browser
-      mainFields: ["module", "jsnext:main", "jsnext"], // default minus browser
+    ssr: {
+      noExternal: true, // neccessary so that ssr inlines everything like browser build does
+      ...ssr,
     },
     ...other,
   });

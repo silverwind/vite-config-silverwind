@@ -21,7 +21,6 @@ test("nodeLib", () => {
   expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
   expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).toEqual(true);
   expect(cfg.build?.emptyOutDir).toBeTrue();
-  expect(cfg.resolve?.mainFields).not.toContain("browser");
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
   expect(cfg.build?.minify).toBeFalsy();
