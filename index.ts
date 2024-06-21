@@ -101,7 +101,7 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {exte
           ...Object.keys(peerDependencies || {}),
           ...builtinModules,
           ...builtinModules.map(module => `node:${module}`),
-          ...(external as string[]),
+          ...((external as string[]) || []),
         ],
         ...otherRollupOptions,
       },
