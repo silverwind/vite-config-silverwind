@@ -40,7 +40,7 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
   return ret;
 }
 
-const defaultRollupOptions = {output: {}};
+const defaultRollupOptions = {output: {}, external: []};
 const defaultBuild = {rollupOptions: defaultRollupOptions};
 const defaultConfig = {build: defaultBuild};
 
@@ -78,7 +78,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
 
@@ -101,8 +101,9 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions = defa
           ...Object.keys(peerDependencies || {}),
           ...builtinModules,
           ...builtinModules.map(module => `node:${module}`),
+          ...(external as string[]),
         ],
-        ...rollupOptions,
+        ...otherRollupOptions,
       },
       ...otherBuild,
     },
