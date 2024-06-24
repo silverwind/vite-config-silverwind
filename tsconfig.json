@@ -11,6 +11,7 @@
     "**/dist/**",
   ],
   "compilerOptions": {
+    "strict": true,
     "types": [
       "jest-extended",
       "vite/client",

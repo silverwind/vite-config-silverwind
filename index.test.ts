@@ -28,7 +28,9 @@ test("nodeLib", () => {
 });
 
 test("nodeCli", () => {
-  const cfg = nodeCli();
+  const cfg = nodeCli({
+    url: import.meta.url,
+  });
   expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
   expect(cfg.build?.minify).toBeTruthy();
 });

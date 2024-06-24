@@ -13,7 +13,7 @@ const uniquePluginName = (plugin: Plugin): string => {
 type ViteConfig = UserConfig;
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
-  url?: string,
+  url: string,
   /** Additional path globs to exclude from .d.ts generation */
   dtsExcludes?: string[],
   /** Disable .d.ts generation */
@@ -42,14 +42,14 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
 
 const defaultRollupOptions = {output: {}, external: []};
 const defaultBuild = {rollupOptions: defaultRollupOptions};
-const defaultConfig = {build: defaultBuild};
+const defaultConfig = {url: "", build: defaultBuild};
 
 const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
   return {
     logLevel: "info",
     clearScreen: false,
     build: {
-      ...(url && {outDir: fileURLToPath(new URL("dist", url))}),
+      outDir: fileURLToPath(new URL("dist", url)),
       sourcemap: false,
       emptyOutDir: true,
       chunkSizeWarningLimit: Infinity,
@@ -81,17 +81,14 @@ const libEntryFile = "index.ts";
 function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
-
-  if (url) {
-    ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
-  }
+  ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
 
   return base({
     url,
     build: {
       target: "esnext",
       lib: {
-        ...(url && {entry: fileURLToPath(new URL(libEntryFile, url))}),
+        entry: fileURLToPath(new URL(libEntryFile, url)),
         formats: ["es"],
         ...lib,
       },
