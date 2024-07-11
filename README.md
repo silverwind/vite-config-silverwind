@@ -4,9 +4,9 @@ Shared vite configuration
 
 ```js
 import {defineConfig} from "vite";
-import {lib} from "vite-config-silverwind";
+import {nodeLib} from "vite-config-silverwind";
 
-export default defineConfig(lib({url: import.meta.url}));
+export default defineConfig(nodeLib({url: import.meta.url}));
 ```
 
 © [silverwind](https://github.com/silverwind), distributed under BSD licence.
