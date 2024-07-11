@@ -2,7 +2,7 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {builtinModules} from "node:module";
 import {stringPlugin} from "vite-string-plugin";
-import type {Plugin, UserConfig, PluginOption} from "vite";
+import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
 import dtsPlugin from "vite-plugin-dts";
 
 const uniquePluginName = (plugin: Plugin): string => {
@@ -10,7 +10,6 @@ const uniquePluginName = (plugin: Plugin): string => {
   return `${plugin.name}-${apply}-${String(plugin.enforce)}`;
 };
 
-type ViteConfig = UserConfig;
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
   url: string,
