@@ -15,8 +15,8 @@ type CustomConfig = ViteConfig & {
   url: string,
   /** Additional path globs to exclude from .d.ts generation */
   dtsExcludes?: string[],
-  /** Disable .d.ts generation */
-  noDts?: boolean,
+  /** Whether to generate .d.ts */
+  dts?: boolean,
 };
 
 function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]): PluginOption[] {
@@ -77,7 +77,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dtsExcludes, dts = true, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
   ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
@@ -104,7 +104,7 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {exte
       ...otherBuild,
     },
     plugins: dedupePlugins([
-      !noDts && dtsPlugin({
+      dts && dtsPlugin({
         logLevel: "warn",
         exclude: [
           "*.config.*",
@@ -117,8 +117,9 @@ function lib({url, dtsExcludes, noDts, build: {lib = false, rollupOptions: {exte
   });
 }
 
-export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
+    dts,
     build: {
       // it's a hack but seems like the best option because "browser" module resolution does not
       // seem to be possible to disable otherwise.
@@ -143,9 +144,9 @@ export function nodeLib({build: {rollupOptions: {output, ...otherRollupOptions} 
   });
 }
 
-export function nodeCli({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeCli({dts = false, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return nodeLib({
-    noDts: true,
+    dts,
     build: {
       minify: "esbuild",
       ...build,
@@ -154,8 +155,9 @@ export function nodeCli({build = defaultBuild, ...other}: CustomConfig = default
   });
 }
 
-export function webLib({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function webLib({dts = true, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
+    dts,
     build: {
       target: "modules",
       minify: false,
@@ -167,8 +169,9 @@ export function webLib({build = defaultBuild, ...other}: CustomConfig = defaultC
   });
 }
 
-export function webApp({build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function webApp({dts = false, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
+    dts,
     build: {
       target: "modules",
       minify: "esbuild",
