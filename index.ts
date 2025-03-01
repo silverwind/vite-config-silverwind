@@ -92,6 +92,7 @@ function lib({url, dtsExcludes, dts = true, build: {lib = false, rollupOptions: 
         ...lib,
       },
       rollupOptions: {
+        maxParallelFileOps: 100, // workaround for https://github.com/rollup/rollup/issues/5848
         external: [
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
