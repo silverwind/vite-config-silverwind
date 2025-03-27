@@ -107,6 +107,7 @@ function lib({url, dtsExcludes, dts = true, build: {lib = false, rollupOptions: 
     plugins: dedupePlugins([
       dts && dtsPlugin({
         logLevel: "warn",
+        rollupTypes: true,
         exclude: [
           "*.config.*",
           "*.test.*",
