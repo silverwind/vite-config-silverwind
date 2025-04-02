@@ -1,4 +1,4 @@
-import {nodeLib, nodeCli, webLib, webApp} from "./index.ts";
+import {nodeLib, nodeCli, webLib, webApp, tscTypeDefsPlugin} from "./index.ts";
 import type {LibraryOptions} from "vite";
 import type {OutputOptions} from "rollup";
 
@@ -70,4 +70,8 @@ test("webapp", () => {
   expect(cfg.plugins).toHaveLength(1);
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.build?.minify).toBeTruthy();
+});
+
+test("tscTypeDefsPlugin", () => {
+  expect(tscTypeDefsPlugin).toBeTruthy();
 });

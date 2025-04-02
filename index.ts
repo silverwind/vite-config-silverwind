@@ -2,7 +2,6 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {builtinModules} from "node:module";
 import {exec} from "node:child_process";
-import {promisify} from "node:util";
 import {stringPlugin} from "vite-string-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
 import dtsPlugin from "vite-plugin-dts";
@@ -25,13 +24,15 @@ type CustomConfig = ViteConfig & {
   dtsTscArgs?: string,
 };
 
-const tscTypeDefsPlugin = ({args = ""}: {args: string}): Plugin => ({
+export const tscTypeDefsPlugin = ({args = ""}: {args: string}): Plugin => ({
   name: "type-defs-plugin",
-  buildEnd: async (err?: Error) => {
+  buildEnd: (err?: Error) => {
     if (err) return;
-    let cmd = "npx tsc --noEmit false --emitDeclarationOnly true --outDir dist";
+    let cmd = "npx tsc --declaration --noEmit false --emitDeclarationOnly true --outDir dist";
     if (args) cmd = `${cmd} ${args}`;
-    await promisify(exec)(cmd);
+    return new Promise((resolve, reject) => {
+      exec(cmd, (err) => (err ? reject(err) : resolve()));
+    });
   },
 });
 

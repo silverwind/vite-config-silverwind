@@ -24,7 +24,6 @@
     "@types/node": "22.13.14",
     "eslint": "8.57.0",
     "eslint-config-silverwind": "100.0.5",
-    "eslint-config-silverwind-typescript": "9.2.2",
     "js-yaml": "4.1.0",
     "typescript": "5.8.2",
     "typescript-config-silverwind": "9.0.1",
