@@ -17,7 +17,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "vite-dts-plugin": "1.0.4",
+    "vite-dts-plugin": "1.1.0",
     "vite-string-plugin": "1.4.4"
   },
   "devDependencies": {
