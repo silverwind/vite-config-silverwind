@@ -1,10 +1,9 @@
 import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {builtinModules} from "node:module";
-import {exec} from "node:child_process";
 import {stringPlugin} from "vite-string-plugin";
+import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
-import dtsPlugin from "vite-plugin-dts";
 
 const uniquePluginName = (plugin: Plugin): string => {
   const apply = typeof plugin.apply === "string" ? plugin.apply : "";
@@ -14,27 +13,12 @@ const uniquePluginName = (plugin: Plugin): string => {
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
   url: string,
-  /** Additional path globs to exclude from .d.ts generation */
-  dtsExcludes?: string[],
-  /** Whether to generate .d.ts */
+  /** Whether to generate type definitions */
   dts?: boolean,
-  /** Whether to use tsc instead of vite-plugin-dts */
-  dtsUseTsc?: boolean,
-  /** Additional tsc command line arguments */
-  dtsTscArgs?: string,
+  /** Options passed to vite-dts-plugin */
+  dtsOpts?: ViteDtsPluginOpts,
 };
 
-export const tscTypeDefsPlugin = ({args = ""}: {args: string}): Plugin => ({
-  name: "type-defs-plugin",
-  buildEnd: (err?: Error) => {
-    if (err) return;
-    let cmd = "npx tsc --declaration --noEmit false --emitDeclarationOnly true --outDir dist";
-    if (args) cmd = `${cmd} ${args}`;
-    return new Promise((resolve, reject) => {
-      exec(cmd, (err) => (err ? reject(err) : resolve()));
-    });
-  },
-});
 
 function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]): PluginOption[] {
   const seen: Set<any> = new Set([]);
@@ -94,7 +78,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dtsExcludes, dts = true, dtsUseTsc = false, dtsTscArgs = "", build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dts = true, dtsOpts = {}, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
   ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
@@ -122,16 +106,7 @@ function lib({url, dtsExcludes, dts = true, dtsUseTsc = false, dtsTscArgs = "", 
       ...otherBuild,
     },
     plugins: dedupePlugins([
-      dts && !dtsUseTsc && dtsPlugin({
-        logLevel: "warn",
-        rollupTypes: true,
-        exclude: [
-          "*.config.*",
-          "*.test.*",
-          ...(dtsExcludes ?? []),
-        ]},
-      ),
-      dts && dtsUseTsc && tscTypeDefsPlugin({args: dtsTscArgs}),
+      dts && dtsPlugin(dtsOpts),
     ], plugins),
     ...other,
   });
