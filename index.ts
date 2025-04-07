@@ -83,17 +83,20 @@ export function makeExcludes(dtsExcludes: Array<string>): string {
     "extends": "./tsconfig.json",
     "exclude": [
       "\${configDir}/**/*.config.*",
+      "\${configDir}/**/*.setup.*",
+      "\${configDir}/**/*.stories.*",
       "\${configDir}/**/*.test.*",
       "\${configDir}/**/.air/**",
       "\${configDir}/**/.git/**",
       "\${configDir}/**/.make/**",
       "\${configDir}/**/.ruff_cache/**",
-      "\${configDir}/**/.venv/**",
       "\${configDir}/**/.swc/**",
+      "\${configDir}/**/.venv/**",
       "\${configDir}/**/build/**",
       "\${configDir}/**/dist/**",
       "\${configDir}/**/node_modules/**",
       "\${configDir}/**/persistent/**",
+      "\${configDir}/.storybook/*",
 ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
     ],
   }`;
