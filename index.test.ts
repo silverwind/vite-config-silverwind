@@ -1,4 +1,4 @@
-import {nodeLib, nodeCli, webLib, webApp} from "./index.ts";
+import {nodeLib, nodeCli, webLib, webApp, makeExcludes} from "./index.ts";
 import type {LibraryOptions} from "vite";
 import type {OutputOptions} from "rollup";
 
@@ -70,4 +70,33 @@ test("webapp", () => {
   expect(cfg.plugins).toHaveLength(1);
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.build?.minify).toBeTruthy();
+});
+
+test("makeExcludes", () => {
+  expect(makeExcludes([
+    "build.js",
+    "eslintrc.js",
+    "globals.js",
+  ])).toMatchInlineSnapshot(`
+    "{
+        "extends": "./tsconfig.json",
+        "exclude": [
+          "\${configDir}/**/*.config.*",
+          "\${configDir}/**/*.test.*",
+          "\${configDir}/**/.air/**",
+          "\${configDir}/**/.git/**",
+          "\${configDir}/**/.make/**",
+          "\${configDir}/**/.ruff_cache/**",
+          "\${configDir}/**/.venv/**",
+          "\${configDir}/**/.swc/**",
+          "\${configDir}/**/build/**",
+          "\${configDir}/**/dist/**",
+          "\${configDir}/**/node_modules/**",
+          "\${configDir}/**/persistent/**",
+          "\${configDir}/build.js",
+          "\${configDir}/eslintrc.js",
+          "\${configDir}/globals.js"
+        ],
+      }"
+  `);
 });

@@ -77,15 +77,8 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
   };
 };
 
-// avoid vite bug https://github.com/vitejs/vite/issues/3295
-const libEntryFile = "index.ts";
-
-function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
-  let dependencies: string[] = [];
-  let peerDependencies: string[] = [];
-  ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
-
-  const tsConfig = `{
+export function makeExcludes(dtsExcludes: Array<string>): string {
+  return `{
     "extends": "./tsconfig.json",
     "exclude": [
       "\${configDir}/**/*.config.*",
@@ -100,9 +93,18 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
       "\${configDir}/**/dist/**",
       "\${configDir}/**/node_modules/**",
       "\${configDir}/**/persistent/**",
-      ${dtsExcludes.map(str => `\${configDir}/${str}`).join(",\n")}
+${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
     ],
   }`;
+}
+
+// avoid vite bug https://github.com/vitejs/vite/issues/3295
+const libEntryFile = "index.ts";
+
+function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+  let dependencies: string[] = [];
+  let peerDependencies: string[] = [];
+  ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
 
   return base({
     url,
@@ -127,7 +129,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
       ...otherBuild,
     },
     plugins: dedupePlugins([
-      dts && dtsPlugin({tsConfig, ...dtsOpts}),
+      dts && dtsPlugin({tsConfig: makeExcludes(dtsExcludes), ...dtsOpts}),
     ], plugins),
     ...other,
   });
