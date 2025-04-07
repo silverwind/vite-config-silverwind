@@ -10,24 +10,6 @@ const uniquePluginName = (plugin: Plugin): string => {
   return `${plugin.name}-${apply}-${String(plugin.enforce)}`;
 };
 
-const dtsTsConfig = `{
-  "extends": "./tsconfig.json",
-  "exclude": [
-    "\${configDir}/**/*.config.*",
-    "\${configDir}/**/*.test.*",
-    "\${configDir}/**/.air/**",
-    "\${configDir}/**/.git/**",
-    "\${configDir}/**/.make/**",
-    "\${configDir}/**/.ruff_cache/**",
-    "\${configDir}/**/.venv/**",
-    "\${configDir}/**/.swc/**",
-    "\${configDir}/**/build/**",
-    "\${configDir}/**/dist/**",
-    "\${configDir}/**/node_modules/**",
-    "\${configDir}/**/persistent/**",
-  ],
-}`;
-
 type CustomConfig = ViteConfig & {
   /** The value of import.meta.url from your config file */
   url: string,
@@ -35,6 +17,8 @@ type CustomConfig = ViteConfig & {
   dts?: boolean,
   /** Options passed to vite-dts-plugin */
   dtsOpts?: ViteDtsPluginOpts,
+  /** Additional exclude patterns passed to vite-dts-plugin */
+  dtsExcludes?: Array<string>,
 };
 
 
@@ -96,10 +80,29 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dts = true, dtsOpts = {tsConfig: dtsTsConfig}, build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
   ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
+
+  const tsConfig = `{
+    "extends": "./tsconfig.json",
+    "exclude": [
+      "\${configDir}/**/*.config.*",
+      "\${configDir}/**/*.test.*",
+      "\${configDir}/**/.air/**",
+      "\${configDir}/**/.git/**",
+      "\${configDir}/**/.make/**",
+      "\${configDir}/**/.ruff_cache/**",
+      "\${configDir}/**/.venv/**",
+      "\${configDir}/**/.swc/**",
+      "\${configDir}/**/build/**",
+      "\${configDir}/**/dist/**",
+      "\${configDir}/**/node_modules/**",
+      "\${configDir}/**/persistent/**",
+      ${dtsExcludes.join(",\n")}
+    ],
+  }`;
 
   return base({
     url,
@@ -124,7 +127,7 @@ function lib({url, dts = true, dtsOpts = {tsConfig: dtsTsConfig}, build: {lib = 
       ...otherBuild,
     },
     plugins: dedupePlugins([
-      dts && dtsPlugin(dtsOpts),
+      dts && dtsPlugin({tsConfig, ...dtsOpts}),
     ], plugins),
     ...other,
   });
