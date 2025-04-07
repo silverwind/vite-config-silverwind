@@ -100,7 +100,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
       "\${configDir}/**/dist/**",
       "\${configDir}/**/node_modules/**",
       "\${configDir}/**/persistent/**",
-      ${dtsExcludes.join(",\n")}
+      ${dtsExcludes.map(str => `\${configDir}/${str}`).join(",\n")}
     ],
   }`;
 
