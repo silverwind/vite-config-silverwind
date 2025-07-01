@@ -18,7 +18,7 @@ test("nodeLib", () => {
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
-  expect(cfg.build?.rollupOptions?.external).toInclude("foo");
+  expect(cfg.build?.rollupOptions?.external).toIncludeAllMembers(["foo"]);
   expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
   expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).toEqual(true);
   expect(cfg.build?.emptyOutDir).toBeTrue();
