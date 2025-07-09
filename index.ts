@@ -181,7 +181,6 @@ export function webLib({dts = true, build = defaultBuild, ...other}: CustomConfi
   return lib({
     dts,
     build: {
-      target: "modules",
       minify: false,
       cssCodeSplit: true, // needed for css entry points
       assetsInlineLimit: 32768,
@@ -195,7 +194,6 @@ export function webApp({dts = false, build = defaultBuild, ...other}: CustomConf
   return base({
     dts,
     build: {
-      target: "modules",
       minify: "esbuild",
       assetsInlineLimit: 32768,
       ...build,

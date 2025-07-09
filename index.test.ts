@@ -46,7 +46,6 @@ test("webLib", () => {
       },
     },
   });
-  expect(cfg.build?.target).toEqual("modules");
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry)?.toBeTruthy();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
@@ -64,7 +63,6 @@ test("webapp", () => {
   const cfg = webApp({
     url: import.meta.url,
   });
-  expect(cfg.build?.target).toEqual("modules");
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(1);
