@@ -19,6 +19,8 @@ type CustomConfig = ViteConfig & {
   dtsOpts?: ViteDtsPluginOpts,
   /** Additional exclude patterns passed to vite-dts-plugin */
   dtsExcludes?: Array<string>,
+  /** Replace instead of append to rollupOptions.external */
+  replaceExternal?: boolean,
 };
 
 
@@ -105,7 +107,7 @@ ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], replaceExternal = false, ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
   ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
@@ -121,7 +123,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
       },
       rollupOptions: {
         maxParallelFileOps: 100, // workaround for https://github.com/rollup/rollup/issues/5848
-        external: [
+        external: replaceExternal ? external : [
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
           ...builtinModules,
