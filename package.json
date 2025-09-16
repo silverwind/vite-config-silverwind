@@ -21,9 +21,9 @@
     "vite-string-plugin": "1.4.6"
   },
   "devDependencies": {
-    "@types/node": "24.4.0",
+    "@types/node": "24.5.0",
     "eslint": "9.35.0",
-    "eslint-config-silverwind": "103.0.4",
+    "eslint-config-silverwind": "103.0.5",
     "js-yaml": "4.1.0",
     "typescript": "5.9.2",
     "typescript-config-silverwind": "10.0.1",
