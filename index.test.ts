@@ -14,7 +14,7 @@ test("nodeLib", () => {
       },
     },
   });
-  expect(cfg.build?.target).toEqual("esnext");
+  expect(cfg.build?.target).toEqual("node22");
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rollupOptions?.external).toBeArray();
