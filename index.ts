@@ -92,13 +92,14 @@ export function makeExcludes(dtsExcludes: Array<string>): string {
       "\${configDir}/**/.git/**",
       "\${configDir}/**/.make/**",
       "\${configDir}/**/.ruff_cache/**",
+      "\${configDir}/**/.storybook/*",
       "\${configDir}/**/.swc/**",
       "\${configDir}/**/.venv/**",
       "\${configDir}/**/build/**",
       "\${configDir}/**/dist/**",
+      "\${configDir}/**/fixtures/**",
       "\${configDir}/**/node_modules/**",
       "\${configDir}/**/persistent/**",
-      "\${configDir}/.storybook/*",
 ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
     ],
   }`;
