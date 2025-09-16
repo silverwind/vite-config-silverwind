@@ -148,7 +148,7 @@ export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRol
       // it's a hack but seems like the best option because "browser" module resolution does not
       // seem to be possible to disable otherwise.
       ssr: true,
-      target: "esnext",
+      target: "node22",
       minify: false,
       assetsInlineLimit: 0,
       rollupOptions: {
