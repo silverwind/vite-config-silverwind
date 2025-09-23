@@ -100,6 +100,7 @@ export function makeExcludes(dtsExcludes: Array<string>): string {
       "\${configDir}/**/fixtures/**",
       "\${configDir}/**/node_modules/**",
       "\${configDir}/**/persistent/**",
+      "\${configDir}/**/tests/**",
 ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
     ],
   }`;
