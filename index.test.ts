@@ -95,6 +95,7 @@ test("makeExcludes", () => {
           "\${configDir}/**/fixtures/**",
           "\${configDir}/**/node_modules/**",
           "\${configDir}/**/persistent/**",
+          "\${configDir}/**/tests/**",
           "\${configDir}/build.js",
           "\${configDir}/eslintrc.js",
           "\${configDir}/globals.js"
