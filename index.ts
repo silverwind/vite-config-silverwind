@@ -79,7 +79,6 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
   };
 };
 
-// TODO: dtsExcludes does not work, for example in repo eslint-config-silverwind
 export function makeExcludes(dtsExcludes: Array<string>): string {
   return `{
     "extends": "./tsconfig.json",
