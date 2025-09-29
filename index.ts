@@ -48,7 +48,7 @@ const defaultRollupOptions = {output: {}, external: []};
 const defaultBuild = {rollupOptions: defaultRollupOptions};
 const defaultConfig = {url: "", build: defaultBuild};
 
-const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig => {
+function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -77,7 +77,7 @@ const base = ({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
     ], plugins),
     ...other,
   };
-};
+}
 
 export function makeExcludes(dtsExcludes: Array<string>): string {
   return `{
