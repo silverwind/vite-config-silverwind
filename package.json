@@ -21,16 +21,16 @@
     "vite-string-plugin": "1.4.6"
   },
   "devDependencies": {
-    "@types/node": "24.5.2",
-    "eslint": "9.36.0",
-    "eslint-config-silverwind": "105.1.0",
+    "@types/node": "24.10.0",
+    "eslint": "9.39.1",
+    "eslint-config-silverwind": "110.0.0",
     "js-yaml": "4.1.0",
-    "typescript": "5.9.2",
-    "typescript-config-silverwind": "10.0.1",
-    "updates": "16.7.2",
-    "versions": "13.1.2",
-    "vite": "7.1.7",
-    "vitest": "3.2.4",
-    "vitest-config-silverwind": "10.2.0"
+    "typescript": "5.9.3",
+    "typescript-config-silverwind": "12.0.0",
+    "updates": "16.9.1",
+    "versions": "14.0.2",
+    "vite": "7.2.0",
+    "vitest": "4.0.7",
+    "vitest-config-silverwind": "10.4.0"
   }
 }
