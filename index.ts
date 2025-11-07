@@ -172,7 +172,6 @@ export function nodeCli({dts = false, build = defaultBuild, ...other}: CustomCon
   return nodeLib({
     dts,
     build: {
-      minify: "esbuild",
       ...build,
     },
     ...other,
@@ -196,7 +195,6 @@ export function webApp({dts = false, build = defaultBuild, ...other}: CustomConf
   return base({
     dts,
     build: {
-      minify: "esbuild",
       assetsInlineLimit: 32768,
       ...build,
     },
