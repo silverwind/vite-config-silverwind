@@ -24,7 +24,7 @@ test("nodeLib", () => {
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
-  expect(cfg.build?.minify).toBeFalsy();
+  expect(cfg.build?.minify).toBeUndefined();
 });
 
 test("nodeCli", () => {
@@ -67,7 +67,7 @@ test("webapp", () => {
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(1);
   expect(cfg.resolve?.mainFields).toBeFalsy();
-  expect(cfg.build?.minify).toBeTruthy();
+  expect(cfg.build?.minify).toBeUndefined();
 });
 
 test("makeExcludes", () => {
