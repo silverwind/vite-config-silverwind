@@ -123,7 +123,6 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
         ...lib,
       },
       rollupOptions: {
-        maxParallelFileOps: 100, // workaround for https://github.com/rollup/rollup/issues/5848
         external: replaceExternal ? external : [
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
