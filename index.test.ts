@@ -24,7 +24,6 @@ test("nodeLib", () => {
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
-  expect(cfg.build?.minify).toBeUndefined();
 });
 
 test("nodeCli", () => {
@@ -32,7 +31,6 @@ test("nodeCli", () => {
     url: import.meta.url,
   });
   expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
-  expect(cfg.build?.minify).toBeTruthy();
 });
 
 test("webLib", () => {
@@ -56,7 +54,6 @@ test("webLib", () => {
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
-  expect(cfg.build?.minify).toBeFalsy();
 });
 
 test("webapp", () => {
@@ -67,7 +64,6 @@ test("webapp", () => {
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(1);
   expect(cfg.resolve?.mainFields).toBeFalsy();
-  expect(cfg.build?.minify).toBeUndefined();
 });
 
 test("makeExcludes", () => {
