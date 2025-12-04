@@ -56,7 +56,7 @@ function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
       outDir: fileURLToPath(new URL("dist", url)),
       sourcemap: false,
       emptyOutDir: true,
-      chunkSizeWarningLimit: Infinity,
+      chunkSizeWarningLimit: 500000, // https://github.com/vitejs/rolldown-vite/issues/499
       reportCompressedSize: false,
       rollupOptions: {
         output: {
