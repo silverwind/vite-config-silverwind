@@ -5,6 +5,10 @@ import {stringPlugin} from "vite-string-plugin";
 import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
 
+function isObject<T = Record<string, any>>(obj: any): obj is T {
+  return Object.prototype.toString.call(obj) === "[object Object]";
+}
+
 const uniquePluginName = (plugin: Plugin): string => {
   const apply = typeof plugin.apply === "string" ? plugin.apply : "";
   return `${plugin.name}-${apply}-${String(plugin.enforce)}`;
@@ -142,6 +146,12 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
 }
 
 export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  const hasMultipleEntryPoints = Boolean(
+    isObject(otherBuild?.lib) &&
+    Array.isArray(otherBuild?.lib?.entry) &&
+    otherBuild.lib.entry.length > 1
+  );
+
   return lib({
     dts,
     build: {
@@ -153,7 +163,7 @@ export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRol
       assetsInlineLimit: 0,
       rollupOptions: {
         output: {
-          inlineDynamicImports: true,
+          ...(!hasMultipleEntryPoints && {inlineDynamicImports: true}),
           ...output,
         },
         ...otherRollupOptions,
