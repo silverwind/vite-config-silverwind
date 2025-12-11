@@ -21,15 +21,15 @@
     "vite-string-plugin": "1.4.9"
   },
   "devDependencies": {
-    "@types/node": "24.10.1",
+    "@types/node": "25.0.0",
     "eslint": "9.39.1",
-    "eslint-config-silverwind": "112.1.0",
+    "eslint-config-silverwind": "112.2.4",
     "js-yaml": "4.1.1",
     "typescript": "5.9.3",
     "typescript-config-silverwind": "14.0.0",
-    "updates": "17.0.2",
+    "updates": "17.0.7",
     "versions": "14.0.3",
-    "vite": "7.2.6",
+    "vite": "7.2.7",
     "vitest": "4.0.15",
     "vitest-config-silverwind": "10.4.2"
   }
