@@ -1,6 +1,6 @@
 {
   "name": "vite-config-silverwind",
-  "version": "6.0.9",
+  "version": "6.0.10",
   "description": "Shared vite configuration",
   "author": "silverwind <me@silverwind.io>",
   "repository": "silverwind/vite-config-silverwind",
