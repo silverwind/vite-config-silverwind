@@ -30,6 +30,7 @@
     "eslint-config-silverwind": "120.0.1",
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
+    "rollup": "4.57.1",
     "typescript": "5.9.3",
     "typescript-config-silverwind": "14.0.0",
     "updates": "17.1.0",
