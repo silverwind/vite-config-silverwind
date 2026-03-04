@@ -32,6 +32,8 @@
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
     "rollup": "4.57.1",
+    "tsdown": "0.20.3",
+    "tsdown-config-silverwind": "1.7.5",
     "typescript": "5.9.3",
     "typescript-config-silverwind": "15.0.0",
     "updates": "17.5.2",
