@@ -28,7 +28,7 @@
     "@types/node": "25.3.5",
     "@typescript/native-preview": "7.0.0-dev.20260306.1",
     "eslint": "9.39.3",
-    "eslint-config-silverwind": "122.0.2",
+    "eslint-config-silverwind": "122.0.4",
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
     "rollup": "4.59.0",
