@@ -146,11 +146,10 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
 }
 
 export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
-  const hasMultipleEntryPoints = Boolean(
+  const hasMultipleEntryPoints =
     isObject(otherBuild?.lib) &&
     Array.isArray(otherBuild?.lib?.entry) &&
-    otherBuild.lib.entry.length > 1
-  );
+    otherBuild.lib.entry.length > 1;
 
   return lib({
     dts,
