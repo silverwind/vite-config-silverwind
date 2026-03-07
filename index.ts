@@ -1,9 +1,11 @@
 import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
-import {builtinModules} from "node:module";
+import {builtinModules, createRequire} from "node:module";
 import {stringPlugin} from "vite-string-plugin";
 import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
+
+const viteMajor = Number(createRequire(`${process.cwd()}/`)("vite/package.json").version.split(".")[0]);
 
 function isObject<T = Record<string, any>>(obj: any): obj is T {
   return Object.prototype.toString.call(obj) === "[object Object]";
@@ -66,6 +68,7 @@ function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
         output: {
           // for some reason rollup likes to use module name as filename instead of the documented default
           entryFileNames: "[name].js",
+          ...(viteMajor >= 8 && {comments: {legal: false}} as any),
           ...output,
         },
         ...otherRollupOptions,
@@ -73,7 +76,7 @@ function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
       ...otherBuild,
     },
     esbuild: {
-      legalComments: "none",
+      ...(viteMajor < 8 && {legalComments: "none" as const}),
       ...esbuild,
     },
     plugins: dedupePlugins([
