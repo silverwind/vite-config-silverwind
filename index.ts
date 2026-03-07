@@ -6,6 +6,7 @@ import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
 
 const viteMajor = Number(createRequire(`${process.cwd()}/`)("vite/package.json").version.split(".")[0]);
+const rollupOptionsKey = viteMajor >= 8 ? "rolldownOptions" : "rollupOptions";
 
 function isObject<T = Record<string, any>>(obj: any): obj is T {
   return Object.prototype.toString.call(obj) === "[object Object]";
@@ -64,7 +65,7 @@ function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
       emptyOutDir: true,
       chunkSizeWarningLimit: 500000, // https://github.com/vitejs/rolldown-vite/issues/499
       reportCompressedSize: false,
-      rollupOptions: {
+      [rollupOptionsKey]: {
         output: {
           // for some reason rollup likes to use module name as filename instead of the documented default
           entryFileNames: "[name].js",
