@@ -1,12 +1,12 @@
 import {nodeLib, nodeCli, webLib, webApp, makeExcludes} from "./index.ts";
 import type {LibraryOptions} from "vite";
-import type {OutputOptions} from "rollup";
+import type {OutputOptions} from "rolldown";
 
 test("nodeLib", () => {
   const cfg = nodeLib({
     url: import.meta.url,
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         external: ["foo"],
         output: {
           entryFileNames: "foo.js",
@@ -17,10 +17,10 @@ test("nodeLib", () => {
   expect(cfg.build?.target).toEqual("node22");
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
-  expect(cfg.build?.rollupOptions?.external).toBeArray();
-  expect(cfg.build?.rollupOptions?.external).toIncludeAllMembers(["foo"]);
-  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
-  expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).toEqual(true);
+  expect(cfg.build?.rolldownOptions?.external).toBeArray();
+  expect(cfg.build?.rolldownOptions?.external).toIncludeAllMembers(["foo"]);
+  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
+  expect((cfg.build?.rolldownOptions?.output as OutputOptions)?.codeSplitting).toEqual(false);
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
@@ -30,14 +30,14 @@ test("nodeCli", () => {
   const cfg = nodeCli({
     url: import.meta.url,
   });
-  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
+  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
 });
 
 test("webLib", () => {
   const cfg = webLib({
     url: import.meta.url,
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           entryFileNames: "foo.js",
         },
@@ -46,10 +46,9 @@ test("webLib", () => {
   });
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry)?.toBeTruthy();
-  expect(cfg.build?.rollupOptions?.external).toBeArray();
-  expect(cfg.build?.rollupOptions?.external).toBeArray();
-  expect((cfg.build?.rollupOptions?.output as OutputOptions)?.inlineDynamicImports).not.toEqual(true);
-  expect((cfg.build?.rollupOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
+  expect(cfg.build?.rolldownOptions?.external).toBeArray();
+  expect((cfg.build?.rolldownOptions?.output as OutputOptions)?.codeSplitting).not.toEqual(false);
+  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.plugins).toBeArray();

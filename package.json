@@ -13,34 +13,35 @@
   "files": [
     "dist"
   ],
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.32.1",
   "engines": {
     "node": ">=18"
   },
   "peerDependencies": {
-    "vite": "*"
+    "vite": ">=8"
   },
   "dependencies": {
     "vite-dts-plugin": "1.2.0",
-    "vite-string-plugin": "2.0.1"
+    "vite-string-plugin": "2.0.2"
   },
   "devDependencies": {
-    "@types/node": "25.3.5",
-    "@typescript/native-preview": "7.0.0-dev.20260306.1",
-    "eslint": "9.39.3",
-    "eslint-config-silverwind": "122.0.4",
+    "@types/node": "25.5.0",
+    "@typescript/native-preview": "7.0.0-dev.20260312.1",
+    "eslint": "9.39.4",
+    "eslint-config-silverwind": "124.0.7",
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
+    "rolldown": "1.0.0-rc.9",
     "rollup": "4.59.0",
-    "tsdown": "0.21.0",
-    "tsdown-config-silverwind": "2.0.0",
+    "tsdown": "0.21.2",
+    "tsdown-config-silverwind": "2.0.1",
     "typescript": "5.9.3",
-    "typescript-config-silverwind": "15.0.0",
-    "updates": "17.8.2",
+    "typescript-config-silverwind": "16.0.0",
+    "updates": "17.9.1",
     "updates-config-silverwind": "1.0.3",
     "versions": "14.2.1",
-    "vite": "7.3.1",
-    "vitest": "4.0.18",
-    "vitest-config-silverwind": "10.6.3"
+    "vite": "8.0.0",
+    "vitest": "4.1.0",
+    "vitest-config-silverwind": "10.6.4"
   }
 }

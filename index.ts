@@ -1,12 +1,9 @@
 import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
-import {builtinModules, createRequire} from "node:module";
+import {builtinModules} from "node:module";
 import {stringPlugin} from "vite-string-plugin";
 import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
-
-const viteMajor = Number(createRequire(`${process.cwd()}/`)("vite/package.json").version.split(".")[0]);
-const rollupOptionsKey = viteMajor >= 8 ? "rolldownOptions" : "rollupOptions";
 
 function isObject<T = Record<string, any>>(obj: any): obj is T {
   return Object.prototype.toString.call(obj) === "[object Object]";
@@ -26,7 +23,7 @@ type CustomConfig = ViteConfig & {
   dtsOpts?: ViteDtsPluginOpts,
   /** Additional exclude patterns passed to vite-dts-plugin */
   dtsExcludes?: Array<string>,
-  /** Replace instead of append to rollupOptions.external */
+  /** Replace instead of append to rolldownOptions.external */
   replaceExternal?: boolean,
 };
 
@@ -51,11 +48,11 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
   return ret;
 }
 
-const defaultRollupOptions = {output: {}, external: []};
-const defaultBuild = {rollupOptions: defaultRollupOptions};
+const defaultRolldownOptions = {output: {}, external: []};
+const defaultBuild = {rolldownOptions: defaultRolldownOptions};
 const defaultConfig = {url: "", build: defaultBuild};
 
-function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, esbuild = {}, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function base({url, build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -65,20 +62,16 @@ function base({url, build: {rollupOptions: {output, ...otherRollupOptions} = def
       emptyOutDir: true,
       chunkSizeWarningLimit: 500000, // https://github.com/vitejs/rolldown-vite/issues/499
       reportCompressedSize: false,
-      [rollupOptionsKey]: {
+      rolldownOptions: {
         output: {
           // for some reason rollup likes to use module name as filename instead of the documented default
           entryFileNames: "[name].js",
-          ...(viteMajor >= 8 && {comments: {legal: false}} as any),
+          comments: {legal: false},
           ...output,
         },
-        ...otherRollupOptions,
+        ...otherRolldownOptions,
       },
       ...otherBuild,
-    },
-    esbuild: {
-      ...(viteMajor < 8 && {legalComments: "none" as const}),
-      ...esbuild,
     },
     plugins: dedupePlugins([
       stringPlugin(),
@@ -116,7 +109,7 @@ ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
 // avoid vite bug https://github.com/vitejs/vite/issues/3295
 const libEntryFile = "index.ts";
 
-function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rollupOptions: {external = [], ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, plugins = [], replaceExternal = false, ...other}: CustomConfig = defaultConfig): ViteConfig {
+function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rolldownOptions: {external = [], ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], replaceExternal = false, ...other}: CustomConfig = defaultConfig): ViteConfig {
   let dependencies: string[] = [];
   let peerDependencies: string[] = [];
   ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
@@ -130,7 +123,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
         formats: ["es"],
         ...lib,
       },
-      rollupOptions: {
+      rolldownOptions: {
         external: replaceExternal ? external : [
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
@@ -138,7 +131,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
           ...builtinModules.map(module => `node:${module}`),
           ...(Array.isArray(external) ? external : []),
         ],
-        ...otherRollupOptions,
+        ...otherRolldownOptions,
       },
       ...otherBuild,
     },
@@ -149,7 +142,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
   });
 }
 
-export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRollupOptions} = defaultRollupOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeLib({dts = true, build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   const hasMultipleEntryPoints =
     isObject(otherBuild?.lib) &&
     Array.isArray(otherBuild?.lib?.entry) &&
@@ -164,12 +157,12 @@ export function nodeLib({dts = true, build: {rollupOptions: {output, ...otherRol
       target: "node22",
       minify: false,
       assetsInlineLimit: 0,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          ...(!hasMultipleEntryPoints && {inlineDynamicImports: true}),
+          ...(!hasMultipleEntryPoints && {codeSplitting: false}),
           ...output,
         },
-        ...otherRollupOptions,
+        ...otherRolldownOptions,
       },
       ...otherBuild,
     },
