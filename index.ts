@@ -63,6 +63,7 @@ function base({url, build: {rolldownOptions: {output, ...otherRolldownOptions} =
       chunkSizeWarningLimit: 500000, // https://github.com/vitejs/rolldown-vite/issues/499
       reportCompressedSize: false,
       rolldownOptions: {
+        checks: {pluginTimings: false},
         output: {
           // for some reason rollup likes to use module name as filename instead of the documented default
           entryFileNames: "[name].js",
