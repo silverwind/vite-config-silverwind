@@ -26,22 +26,22 @@
   },
   "devDependencies": {
     "@types/node": "25.5.0",
-    "@typescript/native-preview": "7.0.0-dev.20260324.1",
+    "@typescript/native-preview": "7.0.0-dev.20260325.1",
     "eslint": "10.1.0",
     "eslint-config-silverwind": "127.1.4",
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
-    "rolldown": "1.0.0-rc.11",
+    "rolldown": "1.0.0-rc.12",
     "rollup": "4.60.0",
-    "tsdown": "0.21.4",
+    "tsdown": "0.21.5",
     "tsdown-config-silverwind": "2.0.2",
     "typescript": "5.9.3",
     "typescript-config-silverwind": "16.1.0",
-    "updates": "17.11.2",
+    "updates": "17.11.4",
     "updates-config-silverwind": "2.0.1",
-    "versions": "14.2.4",
+    "versions": "14.2.5",
     "vite": "8.0.2",
     "vitest": "4.1.1",
-    "vitest-config-silverwind": "10.6.5"
+    "vitest-config-silverwind": "11.0.2"
   }
 }
