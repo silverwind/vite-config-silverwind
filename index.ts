@@ -60,7 +60,7 @@ function base({url, build: {rolldownOptions: {output, ...otherRolldownOptions} =
       outDir: fileURLToPath(new URL("dist", url)),
       sourcemap: false,
       emptyOutDir: true,
-      chunkSizeWarningLimit: Infinity, // https://github.com/vitejs/rolldown-vite/issues/499
+      chunkSizeWarningLimit: Infinity,
       reportCompressedSize: false,
       rolldownOptions: {
         checks: {pluginTimings: false},
