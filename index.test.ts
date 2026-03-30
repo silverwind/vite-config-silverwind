@@ -1,6 +1,5 @@
 import {nodeLib, nodeCli, webLib, webApp, makeExcludes} from "./index.ts";
-import type {LibraryOptions} from "vite";
-import type {OutputOptions} from "rolldown";
+import type {LibraryOptions, Rolldown} from "vite";
 
 test("nodeLib", () => {
   const cfg = nodeLib({
@@ -19,8 +18,8 @@ test("nodeLib", () => {
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rolldownOptions?.external).toBeArray();
   expect(cfg.build?.rolldownOptions?.external).toIncludeAllMembers(["foo"]);
-  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
-  expect((cfg.build?.rolldownOptions?.output as OutputOptions)?.codeSplitting).toEqual(false);
+  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
+  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toEqual(false);
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
@@ -30,7 +29,7 @@ test("nodeCli", () => {
   const cfg = nodeCli({
     url: import.meta.url,
   });
-  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("[name].js");
+  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("[name].js");
 });
 
 test("webLib", () => {
@@ -47,8 +46,8 @@ test("webLib", () => {
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry)?.toBeTruthy();
   expect(cfg.build?.rolldownOptions?.external).toBeArray();
-  expect((cfg.build?.rolldownOptions?.output as OutputOptions)?.codeSplitting).not.toEqual(false);
-  expect((cfg.build?.rolldownOptions?.output as OutputOptions).entryFileNames).toEqual("foo.js");
+  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).not.toEqual(false);
+  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.resolve?.mainFields).toBeFalsy();
   expect(cfg.plugins).toBeArray();
