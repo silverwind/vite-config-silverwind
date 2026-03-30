@@ -1,6 +1,6 @@
 {
   "name": "vite-config-silverwind",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Shared vite configuration",
   "author": "silverwind <me@silverwind.io>",
   "repository": "silverwind/vite-config-silverwind",
@@ -31,7 +31,6 @@
     "eslint-config-silverwind": "130.0.2",
     "jest-extended": "7.0.0",
     "js-yaml": "4.1.1",
-    "rolldown": "1.0.0-rc.12",
     "tsdown": "0.21.7",
     "tsdown-config-silverwind": "2.0.5",
     "typescript": "5.9.3",
