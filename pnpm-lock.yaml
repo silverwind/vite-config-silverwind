@@ -37,8 +37,8 @@ importers:
         specifier: 0.21.10
         version: 0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3)
       tsdown-config-silverwind:
-        specifier: 2.1.1
-        version: 2.1.1(tsdown@0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3))
+        specifier: 3.0.0
+        version: 3.0.0(tsdown@0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3))
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -49,8 +49,8 @@ importers:
         specifier: 17.16.9
         version: 17.16.9
       updates-config-silverwind:
-        specifier: 2.1.2
-        version: 2.1.2(prettier@3.8.3)
+        specifier: 3.0.0
+        version: 3.0.0(prettier@3.8.3)
       versions:
         specifier: 15.0.3
         version: 15.0.3
@@ -1162,9 +1162,9 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
-  tsdown-config-silverwind@2.1.1:
-    resolution: {integrity: sha512-F7pIjxQgwO2FCAOvEBIEdxviCMJo11SYcfinn+FtZsGCG9seUQoYEbgmZfEyJVIhPokmvmcQVCWBxTWiXmVWuw==}
-    engines: {node: '>=20'}
+  tsdown-config-silverwind@3.0.0:
+    resolution: {integrity: sha512-Ok/jdwO4KQcYmhoNEmxRHlpNZ2V+oHdDlFiOp3PwoDpzszGlhtqHC/GxeznorDkxweA9VnNLGbNA9BJX/1QmxQ==}
+    engines: {node: '>=22'}
     peerDependencies:
       tsdown: '*'
 
@@ -1230,9 +1230,9 @@ packages:
       synckit:
         optional: true
 
-  updates-config-silverwind@2.1.2:
-    resolution: {integrity: sha512-eSNQKuiiwb61g/vul1+RVxyUeTLGFh4V69tUjSLKh+gA7hiAGm1h7iicCJtuhuPlo3KeB4ZTgM8XO1LHBtNJOA==}
-    engines: {node: '>=20'}
+  updates-config-silverwind@3.0.0:
+    resolution: {integrity: sha512-mCNRYKiJAemcCoLVh8wEfXbWb8lZDI1pcMzhx75A13CCLQ8snwJrUcD9ZrvBoc9IGurkuNZ7iCyNaJTDG8Hdvg==}
+    engines: {node: '>=22'}
     peerDependencies:
       prettier: '*'
 
@@ -2321,7 +2321,7 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  tsdown-config-silverwind@2.1.1(tsdown@0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3)):
+  tsdown-config-silverwind@3.0.0(tsdown@0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3)):
     dependencies:
       tsdown: 0.21.10(@typescript/native-preview@7.0.0-dev.20260505.1)(typescript@6.0.3)
 
@@ -2398,7 +2398,7 @@ snapshots:
     dependencies:
       rolldown: 1.0.0-rc.17
 
-  updates-config-silverwind@2.1.2(prettier@3.8.3):
+  updates-config-silverwind@3.0.0(prettier@3.8.3):
     dependencies:
       prettier: 3.8.3
 
