@@ -3,7 +3,10 @@
   "version": "8.0.5",
   "description": "Shared vite configuration",
   "author": "silverwind <me@silverwind.io>",
-  "repository": "silverwind/vite-config-silverwind",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/silverwind/vite-config-silverwind.git"
+  },
   "license": "BSD-2-Clause",
   "type": "module",
   "sideEffects": false,

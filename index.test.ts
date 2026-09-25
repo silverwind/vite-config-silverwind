@@ -17,7 +17,7 @@ test("nodeLib", () => {
   expect(cfg.build?.lib).toBeTruthy();
   expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rolldownOptions?.external).toBeArray();
-  expect(cfg.build?.rolldownOptions?.external).toIncludeAllMembers(["foo"]);
+  expect(cfg.build?.rolldownOptions?.external).toEqual(expect.arrayContaining(["foo"]));
   expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
   expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toEqual(false);
   expect(cfg.build?.emptyOutDir).toBeTrue();
