@@ -42,7 +42,7 @@ const defaultRolldownOptions = {output: {}, external: []};
 const defaultBuild = {rolldownOptions: defaultRolldownOptions};
 const defaultConfig = {url: "", build: defaultBuild};
 
-function base({url, build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
+function base({url, dts: _dts, dtsOpts: _dtsOpts, dtsExcludes: _dtsExcludes, replaceExternal: _replaceExternal, build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], ...other}: CustomConfig = defaultConfig): ViteConfig {
   return {
     logLevel: "info",
     clearScreen: false,
@@ -178,9 +178,8 @@ export function webLib({build, ...other}: CustomConfig = defaultConfig): ViteCon
   });
 }
 
-export function webApp({dts = false, build, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function webApp({build, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
-    dts,
     build: {
       assetsInlineLimit: 32768,
       ...build,

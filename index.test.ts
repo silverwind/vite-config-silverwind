@@ -65,7 +65,12 @@ test("webLib", () => {
 test("webapp", () => {
   const cfg = webApp({
     url: import.meta.url,
+    dts: true,
+    dtsOpts: {},
+    dtsExcludes: [],
+    replaceExternal: true,
   });
+  expect(Object.keys(cfg)).toEqual(["logLevel", "clearScreen", "build", "plugins"]);
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(1);
