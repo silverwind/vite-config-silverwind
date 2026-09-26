@@ -113,7 +113,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
           ...Object.keys(dependencies || {}),
           ...Object.keys(peerDependencies || {}),
           ...builtinModules,
-          ...builtinModules.map(module => `node:${module}`),
+          ...builtinModules.filter(module => !module.startsWith("node:")).map(module => `node:${module}`),
           ...(Array.isArray(external) ? external : []),
         ],
         ...otherRolldownOptions,
