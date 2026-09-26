@@ -5,10 +5,6 @@ import {stringPlugin} from "vite-string-plugin";
 import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
 import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
 
-function isObject<T = Record<string, any>>(obj: any): obj is T {
-  return Object.prototype.toString.call(obj) === "[object Object]";
-}
-
 const uniquePluginName = (plugin: Plugin): string => {
   const apply = typeof plugin.apply === "string" ? plugin.apply : "";
   return `${plugin.name}-${apply}-${String(plugin.enforce)}`;
@@ -27,19 +23,16 @@ type CustomConfig = ViteConfig & {
   replaceExternal?: boolean,
 };
 
-
 function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]): PluginOption[] {
-  const seen = new Set<any>();
+  const seen = new Set<string>();
   const ret: Plugin[] = [];
 
-  for (const plugin of [...userPlugins, ...libPlugins]) { // prefer user plugins
-    const name = plugin ? uniquePluginName(plugin as Plugin) : null;
-
-    if (!plugin || seen.has(name)) continue;
-    ret.push(plugin as Plugin);
-    if (name) {
-      seen.add(name);
-    }
+  for (const plugin of [...userPlugins, ...libPlugins] as Plugin[]) { // prefer user plugins
+    if (!plugin) continue;
+    const name = uniquePluginName(plugin);
+    if (seen.has(name)) continue;
+    seen.add(name);
+    ret.push(plugin);
   }
 
   return ret;
@@ -62,8 +55,7 @@ function base({url, build: {rolldownOptions: {output, ...otherRolldownOptions} =
       rolldownOptions: {
         checks: {pluginTimings: false},
         output: {
-          // for some reason rollup likes to use module name as filename instead of the documented default
-          entryFileNames: "[name].js",
+          entryFileNames: "[name].js", // vite lib mode defaults to the package name
           comments: {legal: false},
           ...output,
         },
@@ -104,20 +96,15 @@ ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
   }`;
 }
 
-// avoid vite bug https://github.com/vitejs/vite/issues/3295
-const libEntryFile = "index.ts";
-
 function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rolldownOptions: {external = [], ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], replaceExternal = false, ...other}: CustomConfig = defaultConfig): ViteConfig {
-  let dependencies: string[] = [];
-  let peerDependencies: string[] = [];
-  ({dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8")));
+  const {dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8"));
 
   return base({
     url,
     build: {
       target: "esnext",
       lib: {
-        entry: fileURLToPath(new URL(libEntryFile, url)),
+        entry: fileURLToPath(new URL("index.ts", url)), // avoid vite bug https://github.com/vitejs/vite/issues/3295
         formats: ["es"],
         ...lib,
       },
@@ -140,18 +127,13 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
   });
 }
 
-export function nodeLib({dts = true, build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
-  const hasMultipleEntryPoints =
-    isObject(otherBuild?.lib) &&
-    Array.isArray(otherBuild?.lib?.entry) &&
-    otherBuild.lib.entry.length > 1;
+export function nodeLib({build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
+  const entry = otherBuild.lib && otherBuild.lib.entry;
+  const hasMultipleEntryPoints = Array.isArray(entry) && entry.length > 1;
 
   return lib({
-    dts,
     build: {
-      // it's a hack but seems like the best option because "browser" module resolution does not
-      // seem to be possible to disable otherwise.
-      ssr: true,
+      ssr: true, // hack to disable "browser" module resolution
       target: "node22",
       minify: false,
       assetsInlineLimit: 0,
@@ -165,14 +147,14 @@ export function nodeLib({dts = true, build: {rolldownOptions: {output, ...otherR
       ...otherBuild,
     },
     ssr: {
-      noExternal: true, // neccessary so that ssr inlines everything like browser build does
+      noExternal: true, // make ssr inline everything like the browser build does
       ...ssr,
     },
     ...other,
   });
 }
 
-export function nodeCli({dts = false, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function nodeCli({dts = false, build, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return nodeLib({
     dts,
     build: {
@@ -182,9 +164,8 @@ export function nodeCli({dts = false, build = defaultBuild, ...other}: CustomCon
   });
 }
 
-export function webLib({dts = true, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function webLib({build, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return lib({
-    dts,
     build: {
       minify: false,
       cssCodeSplit: true, // needed for css entry points
@@ -195,7 +176,7 @@ export function webLib({dts = true, build = defaultBuild, ...other}: CustomConfi
   });
 }
 
-export function webApp({dts = false, build = defaultBuild, ...other}: CustomConfig = defaultConfig): ViteConfig {
+export function webApp({dts = false, build, ...other}: CustomConfig = defaultConfig): ViteConfig {
   return base({
     dts,
     build: {

@@ -44,7 +44,7 @@ test("webLib", () => {
     },
   });
   expect(cfg.build?.lib).toBeTruthy();
-  expect((cfg.build?.lib as LibraryOptions)?.entry)?.toBeTruthy();
+  expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
   expect(cfg.build?.rolldownOptions?.external).toBeArray();
   expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).not.toEqual(false);
   expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
