@@ -1,92 +1,45 @@
 import {nodeLib, nodeCli, webLib, webApp, makeExcludes} from "./index.ts";
-import type {LibraryOptions, Rolldown} from "vite";
+import type {Rolldown} from "vite";
+
+const url = import.meta.url;
 
 test("nodeLib", () => {
-  const cfg = nodeLib({
-    url: import.meta.url,
-    build: {
-      rolldownOptions: {
-        external: ["foo"],
-        output: {
-          entryFileNames: "foo.js",
-        },
-      },
-    },
-  });
-  expect(cfg.build?.target).toEqual("node22");
-  expect(cfg.build?.lib).toBeTruthy();
-  expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
-  expect(cfg.build?.rolldownOptions?.external).toBeArray();
-  expect(cfg.build?.rolldownOptions?.external).toEqual(expect.arrayContaining(["foo"]));
-  expect((cfg.build?.rolldownOptions?.external as Array<string>).filter(name => name.startsWith("node:node:"))).toEqual([]);
-  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
-  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toEqual(false);
-  expect(cfg.build?.emptyOutDir).toBeTrue();
-  expect(cfg.plugins).toBeArray();
-  expect(cfg.plugins).toHaveLength(2);
+  const {build, plugins} = nodeLib({url, build: {rolldownOptions: {external: ["foo"], output: {entryFileNames: "foo.js"}}}});
+  expect(build).toMatchObject({target: "node22", lib: {entry: expect.stringMatching(/index\.ts$/)}, emptyOutDir: true});
+  expect(build!.rolldownOptions!.output).toEqual({entryFileNames: "foo.js", comments: {legal: false}, codeSplitting: false});
+  expect((build!.rolldownOptions!.external as Array<string>).filter(id => id === "foo" || id.startsWith("node:node:"))).toEqual(["foo"]);
+  expect(plugins).toEqual([expect.anything(), expect.anything()]);
 
-  const multiEntryCfg = nodeLib({url: import.meta.url, build: {lib: {entry: {a: "a.ts", b: "b.ts"}}}});
-  expect((multiEntryCfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toBeUndefined();
+  expect(nodeLib({url, build: {lib: {entry: {a: "a.ts", b: "b.ts"}}}}).build!.rolldownOptions!.output).toEqual({entryFileNames: "[name].js", comments: {legal: false}});
 
-  const isExternal = nodeLib({url: import.meta.url, build: {rolldownOptions: {external: id => id === "foo"}}})
-    .build?.rolldownOptions?.external as Rolldown.ExternalOptionFunction;
+  const isExternal = nodeLib({url, build: {rolldownOptions: {external: id => id === "foo"}}}).build!.rolldownOptions!.external as Rolldown.ExternalOptionFunction;
   expect(["foo", "vite", "node:fs", "bar"].map(id => isExternal(id, undefined, false))).toEqual([true, true, true, false]);
 
   for (const external of ["foo", /foo/]) {
-    expect(nodeLib({url: import.meta.url, build: {rolldownOptions: {external}}}).build?.rolldownOptions?.external).toEqual(expect.arrayContaining(["vite", "node:fs", external]));
+    expect(nodeLib({url, build: {rolldownOptions: {external}}}).build!.rolldownOptions!.external).toEqual(expect.arrayContaining(["vite", "node:fs", external]));
   }
 });
 
 test("nodeCli", () => {
-  const cfg = nodeCli({
-    url: import.meta.url,
-  });
-  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("[name].js");
+  expect(nodeCli({url}).build!.rolldownOptions!.output).toEqual({entryFileNames: "[name].js", comments: {legal: false}, codeSplitting: false});
 });
 
 test("webLib", () => {
-  const cfg = webLib({
-    url: import.meta.url,
-    build: {
-      rolldownOptions: {
-        output: {
-          entryFileNames: "foo.js",
-        },
-      },
-    },
-  });
-  expect(cfg.build?.lib).toBeTruthy();
-  expect((cfg.build?.lib as LibraryOptions)?.entry).toBeTruthy();
-  expect(cfg.build?.rolldownOptions?.external).toBeArray();
-  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).not.toEqual(false);
-  expect((cfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).entryFileNames).toEqual("foo.js");
-  expect(cfg.build?.emptyOutDir).toBeTrue();
-  expect(cfg.resolve?.mainFields).toBeFalsy();
-  expect(cfg.plugins).toBeArray();
-  expect(cfg.plugins).toHaveLength(2);
+  const {build, plugins, resolve} = webLib({url, build: {rolldownOptions: {output: {entryFileNames: "foo.js"}}}});
+  expect(build).toMatchObject({lib: {entry: expect.stringMatching(/index\.ts$/)}, rolldownOptions: {external: expect.any(Array)}, emptyOutDir: true});
+  expect(build!.rolldownOptions!.output).toEqual({entryFileNames: "foo.js", comments: {legal: false}});
+  expect(resolve?.mainFields).toBeFalsy();
+  expect(plugins).toEqual([expect.anything(), expect.anything()]);
 });
 
 test("webapp", () => {
-  const cfg = webApp({
-    url: import.meta.url,
-    dts: true,
-    dtsOpts: {},
-    dtsExcludes: [],
-    replaceExternal: true,
-  });
+  const cfg = webApp({url, dts: true, dtsOpts: {}, dtsExcludes: [], replaceExternal: true});
   expect(Object.keys(cfg)).toEqual(["logLevel", "clearScreen", "build", "plugins"]);
-  expect(cfg.build?.emptyOutDir).toBeTrue();
-  expect(cfg.plugins).toBeArray();
-  expect(cfg.plugins).toHaveLength(1);
-  expect(cfg.resolve?.mainFields).toBeFalsy();
+  expect(cfg).toMatchObject({build: {emptyOutDir: true}, plugins: [expect.anything()]});
 });
 
 test("makeExcludes", () => {
-  expect(makeExcludes([
-    "build.js",
-    "eslintrc.js",
-    "globals.js",
-  ])).toMatchInlineSnapshot(`
+  expect(makeExcludes(["build.js", "eslintrc.js", "globals.js"])).toMatchInlineSnapshot(`
     "{
         "extends": "./tsconfig.json",
         "exclude": [
