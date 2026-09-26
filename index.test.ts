@@ -27,6 +27,10 @@ test("nodeLib", () => {
 
   const multiEntryCfg = nodeLib({url: import.meta.url, build: {lib: {entry: {a: "a.ts", b: "b.ts"}}}});
   expect((multiEntryCfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toBeUndefined();
+
+  const isExternal = nodeLib({url: import.meta.url, build: {rolldownOptions: {external: id => id === "foo"}}})
+    .build?.rolldownOptions?.external as Rolldown.ExternalOptionFunction;
+  expect(["foo", "vite", "node:fs", "bar"].map(id => isExternal(id, undefined, false))).toEqual([true, true, true, false]);
 });
 
 test("nodeCli", () => {

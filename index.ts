@@ -98,6 +98,12 @@ ${dtsExcludes.map(str => `      "\${configDir}/${str}"`).join(`,\n`)}
 
 function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, rolldownOptions: {external = [], ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, plugins = [], replaceExternal = false, ...other}: CustomConfig = defaultConfig): ViteConfig {
   const {dependencies, peerDependencies} = JSON.parse(readFileSync(new URL("package.json", url), "utf8"));
+  const defaultExternals = [
+    ...Object.keys(dependencies || {}),
+    ...Object.keys(peerDependencies || {}),
+    ...builtinModules,
+    ...builtinModules.filter(module => !module.startsWith("node:")).map(module => `node:${module}`),
+  ];
 
   return base({
     url,
@@ -109,13 +115,9 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
         ...lib,
       },
       rolldownOptions: {
-        external: replaceExternal ? external : [
-          ...Object.keys(dependencies || {}),
-          ...Object.keys(peerDependencies || {}),
-          ...builtinModules,
-          ...builtinModules.filter(module => !module.startsWith("node:")).map(module => `node:${module}`),
-          ...(Array.isArray(external) ? external : []),
-        ],
+        external: replaceExternal ? external : typeof external === "function" ?
+          (id, ...args) => defaultExternals.includes(id) || external(id, ...args) :
+          [...defaultExternals, ...(Array.isArray(external) ? external : [])],
         ...otherRolldownOptions,
       },
       ...otherBuild,
