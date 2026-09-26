@@ -117,7 +117,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
       rolldownOptions: {
         external: replaceExternal ? external : typeof external === "function" ?
           (id, ...args) => defaultExternals.includes(id) || external(id, ...args) :
-          [...defaultExternals, ...(Array.isArray(external) ? external : [])],
+          [...defaultExternals, ...(external ? [external].flat() : [])],
         ...otherRolldownOptions,
       },
       ...otherBuild,

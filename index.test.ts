@@ -31,6 +31,10 @@ test("nodeLib", () => {
   const isExternal = nodeLib({url: import.meta.url, build: {rolldownOptions: {external: id => id === "foo"}}})
     .build?.rolldownOptions?.external as Rolldown.ExternalOptionFunction;
   expect(["foo", "vite", "node:fs", "bar"].map(id => isExternal(id, undefined, false))).toEqual([true, true, true, false]);
+
+  for (const external of ["foo", /foo/]) {
+    expect(nodeLib({url: import.meta.url, build: {rolldownOptions: {external}}}).build?.rolldownOptions?.external).toEqual(expect.arrayContaining(["vite", "node:fs", external]));
+  }
 });
 
 test("nodeCli", () => {
