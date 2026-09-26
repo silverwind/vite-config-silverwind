@@ -129,7 +129,7 @@ function lib({url, dts = true, dtsOpts, dtsExcludes = [], build: {lib = false, r
 
 export function nodeLib({build: {rolldownOptions: {output, ...otherRolldownOptions} = defaultRolldownOptions, ...otherBuild} = defaultBuild, ssr = {}, ...other}: CustomConfig = defaultConfig): ViteConfig {
   const entry = otherBuild.lib && otherBuild.lib.entry;
-  const hasMultipleEntryPoints = Array.isArray(entry) && entry.length > 1;
+  const hasMultipleEntryPoints = typeof entry === "object" && Object.keys(entry).length > 1;
 
   return lib({
     build: {

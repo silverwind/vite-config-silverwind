@@ -24,6 +24,9 @@ test("nodeLib", () => {
   expect(cfg.build?.emptyOutDir).toBeTrue();
   expect(cfg.plugins).toBeArray();
   expect(cfg.plugins).toHaveLength(2);
+
+  const multiEntryCfg = nodeLib({url: import.meta.url, build: {lib: {entry: {a: "a.ts", b: "b.ts"}}}});
+  expect((multiEntryCfg.build?.rolldownOptions?.output as Rolldown.OutputOptions).codeSplitting).toBeUndefined();
 });
 
 test("nodeCli", () => {
