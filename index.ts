@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import {builtinModules} from "node:module";
 import {stringPlugin} from "vite-string-plugin";
 import {dtsPlugin, type ViteDtsPluginOpts} from "vite-dts-plugin";
-import type {Plugin, UserConfig as ViteConfig, PluginOption} from "vite";
+import type {Plugin, UserConfig as ViteConfig, PluginOption, Rolldown} from "vite";
 
 const uniquePluginName = (plugin: Plugin): string => {
   const apply = typeof plugin.apply === "string" ? plugin.apply : "";
@@ -38,6 +38,10 @@ function dedupePlugins(libPlugins: PluginOption[], userPlugins: PluginOption[]):
   return ret;
 }
 
+function mergeOutput(defaults: Rolldown.OutputOptions, output?: Rolldown.OutputOptions | Rolldown.OutputOptions[]): Rolldown.OutputOptions | Rolldown.OutputOptions[] {
+  return Array.isArray(output) ? output.map(entry => ({...defaults, ...entry})) : {...defaults, ...output};
+}
+
 const defaultRolldownOptions = {output: {}, external: []};
 const defaultBuild = {rolldownOptions: defaultRolldownOptions};
 const defaultConfig = {url: "", build: defaultBuild};
@@ -54,11 +58,10 @@ function base({url, dts: _dts, dtsOpts: _dtsOpts, dtsExcludes: _dtsExcludes, rep
       reportCompressedSize: false,
       rolldownOptions: {
         checks: {pluginTimings: false},
-        output: {
+        output: mergeOutput({
           entryFileNames: "[name].js", // vite lib mode defaults to the package name
           comments: {legal: false},
-          ...output,
-        },
+        }, output),
         ...otherRolldownOptions,
       },
       ...otherBuild,
@@ -140,10 +143,7 @@ export function nodeLib({build: {rolldownOptions: {output, ...otherRolldownOptio
       minify: false,
       assetsInlineLimit: 0,
       rolldownOptions: {
-        output: {
-          ...(!hasMultipleEntryPoints && {codeSplitting: false}),
-          ...output,
-        },
+        output: mergeOutput(hasMultipleEntryPoints ? {} : {codeSplitting: false}, output),
         ...otherRolldownOptions,
       },
       ...otherBuild,
